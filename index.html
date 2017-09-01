@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Twitter-app</title>
+
+    <script src="https://use.fontawesome.com/b9538178ee.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="script.js" charset="utf-8"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+  </head>
+
+  <body onload="onload();">
+    <div class="container">
+
+
+      <section class="search-bar">
+        <div class="row">
+
+          <div class="col-lg-2 no-padding"><img src="img/twitter-logo.png" width="34px" height="34px" style="margin:12px" alt="Logo here"/></div>
+
+          <div class="col-lg-7 no-padding">
+            <div class="search-wrapper">
+              <form id="search-twitter">
+                <div class="input-group">
+                  <div class="input-group-btn">
+                    <button type="button" class="btn btn-default dropdown-toggle btn-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <span id="selected">Tweets from</span>
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><a id="option1" href="#">Tweets from</a></li>
+                      <li><a id="option2" href="#">Hashtag</a></li>
+                    </ul>
+                  </div>
+                  <span class="input-group-addon" id="tweet-type" style="border:none;">@</span>
+                  <input id="input-text" type="text" class="form-control" aria-label="..." required>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-3 no-padding">
+              <button class="btn btn-default btn-get" type="submit" > Get tweets </button>
+              </div>
+            </form>
+        </div>
+    </section>
+
+    <section class="select-input">
+      <div class="tags-select">
+        <p>Example:
+          <a id = "example1" href="#" onClick="addTextTag('h_suman'); return false">h_suman,</a>
+          <a id="example2" href="#" onClick="addTextTag('taylorswift13'); return false"> taylorswift13</a>
+          <!-- <a id="example3" href="#" onClick="addTextTag('Soccer'); return false"></>
+          <a id="example4" href="#" onClick="addTextTag('Food'); return false"></>  -->
+        </p>
+      </div>
+    </section>
+
+    <section class="result-section">
+
+    </section>
+
+
+
+
+
+    </div>
+  </body>
+</html>

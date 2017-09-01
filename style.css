@@ -1,0 +1,125 @@
+body{
+  background: #00aced;
+}
+
+.container{
+  max-width: 640px;
+  text-align: center;
+}
+
+.search-bar{
+  border: 2px solid #0084b4;
+  border-radius: 30px;
+  text-align: center;
+  background: #0084b4;
+  margin-top: 90px;
+}
+
+.search-wrapper{
+  padding: 12px 0 12px 0;
+  width: 360px;
+  margin: auto;
+}
+
+.form-control{
+  border: none;
+  border-top-right-radius: 17px;
+  border-bottom-right-radius: 17px;
+}
+
+.btn-dropdown{
+  border: none;
+  height: 34px;
+  border-top-left-radius: 17px;
+  border-bottom-left-radius: 17px;
+}
+
+.btn.btn-get{
+  border: none;
+  border-radius: 30px;
+  background: #3F51B5;
+  margin: 12px;
+  padding: 7px 12px;
+  color: #FFFFFF;
+}
+
+.no-padding{
+  padding: 0;
+}
+
+.select-input{
+  text-align: center;
+  padding: 10px;
+}
+
+.results{
+  border-radius: 10px;
+  width: 560px;
+  padding-top: 0;
+  background: #4FC3F7;
+  margin: auto;
+  height: 232px;
+}
+
+.profile-pic{
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #B3E5FC;
+  float: left;
+  margin: 16px;
+}
+/*.content{
+  float: right;
+  margin: 16px 16px 16px 0;
+}*/
+
+/*.results .row:nth-child(1){
+  background: #B3E5FC;
+  height: 20px;
+  margin: 10px;
+}
+
+.results .row:nth-child(2){
+  background: #B3E5FC;
+  height: 20px;
+  margin: 10px;
+}
+.results .row:nth-child(3){
+  height: 20px;
+  margin: 100px 10px 10px 10px;
+}
+
+.col-md-2{
+  background: #B3E5FC;
+  margin: 0 4px 0 4px;
+}
+
+#time{
+  /*margin-left: 98px;*/  /*Ask EB how to simplify this*/
+  /*float: right;
+}*/
+
+.card-bg{
+  background: white;
+  margin: 20px;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.desc{
+  padding-top: 10px;
+  max-width: 550px;
+  text-align: left;
+}
+
+.images img{
+  /*width: 300px;
+  height: 200px;*/
+  max-width: 70%;
+  padding: 10px;
+}
+
+/*.outer{
+  margin: 10px;
+}*/
