@@ -1,4 +1,5 @@
 /*Use lodash library */
+/*talk about flexbox and bootstrap 4 grid system*/
 
 function onload() {
   console.log("Hello!");
@@ -67,6 +68,22 @@ function sendToServer() {
   sendAJAXReqest(urlToSend)
 }
 
+function goToSomeplace(onClickValue, symbol){
+  console.log("Coming to click function");
+
+  if(symbol == "@"){
+    $("#selected").html("Tweets from");
+    $("#tweet-type").html("@");
+    $("#input-text").val(onClickValue);
+  }
+  else{
+    $("#selected").html("Hashtag");
+    $("#tweet-type").html("#");
+    $("#input-text").val(onClickValue);
+  }
+
+}
+
 function sendAJAXReqest(urlToSend) {
   $.ajax({
     url: urlToSend,
@@ -85,14 +102,13 @@ function renderResult(result) {
   // console.log(tweetType);
   // console.log(tweets.statuses.length);
 
-  if ($("#tweet-type").val() == "@") {
+  if ($("#tweet-type").html() == "@") {
     var tweets = result.tweets;
     console.log(result.tweets);
     //use map if
     for (var i = 0; i < tweets.length; i++) {
       var tweet = tweets[i];
       var picture = "";
-
 
       var photos = tweet.entities.media;
       if (photos) {
@@ -101,24 +117,103 @@ function renderResult(result) {
           picture += `<img src="${img}" />`;
         }
       }
-      // var images = tweet.entities.media.media_url;
+      // console.log("printing hash");
+      // console.log(hash);
+      //
+      // var hash_start = [];
+      // var hash_end = [];
+      // for(var k = 0; k < hash.length; k++){
+      //     hash_start.push(hash[k].indices[0]);
+      //     hash_end.push(hash[k].indices[1]);
+      // }
+      //
+      //
+      // var user = tweet.entities.user_mentions;
+      // var user_start = [];
+      // var user_end = [];
+      //
+      // for(var m = 0; m < user.length; m++){
+      //   user_start.push(user[m].indices[0]);
+      //   user_end.push(user[m].indices[1]);
+      // }
 
+
+      // for(var l=0; l < tweet.text.length; l++){
+      //   if(hash_start.indexOf(l) != -1){
+      //     output_text += "<a>"
+      //   }
+      //   else if(hash_end.indexOf(l) != -1){
+      //     output_text += "</a>"
+      //   }
+      //   else if(user_start.indexOf(l) != -1){
+      //     output_text += "<a href='#'>";
+      //   }
+      //   else if(user_end.indexOf(l) != -1){
+      //     output_text += "</a>";
+      //   }
+      //
+      //   output_text += tweet.text[l];
+      // }
+
+      var output_text = tweet.text;
+
+
+      var hash = tweet.entities.hashtags;
+
+      for(var k = 0; k < hash.length; k++){
+        output_text = output_text.replace("#"+hash[k].text, `<a href="#" onclick = "goToSomeplace('${hash[k].text}', '#');">#${hash[k].text}</a>`);
+      }
+
+      var user = tweet.entities.user_mentions;
+      for(var m = 0; m < user.length; m++){
+        console.log("Printing type of hash value");
+        console.log(typeof(user[m].screen_name));
+
+        output_text = output_text.replace("@"+user[m].screen_name, `<a href="#" onclick = "goToSomeplace('${user[m].screen_name}', '@');">@${user[m].screen_name}</a>`)
+      }
+
+      var url_arr = tweet.entities.urls;
+
+      for(var n = 0; n < url_arr.length; n++){
+      output_text = output_text.replace(url_arr[n].url, `<a target="_blank" href="${url_arr[n].expanded_url}">${url_arr[n].display_url}</a>`);
+    }
+
+      var mediaURL = tweet.entities.media || [];
+
+      for(var p = 0; p < mediaURL.length; p++){
+        output_text = output_text.replace(mediaURL[p].url, "");
+      }
+
+
+    console.log(typeof(tweet.text));
       var time = getTime(tweet.created_at);
 
       var tweetHTML = `<div class="card-bg">
-                          <div>
-                            <img class= "profile-pic" src="${tweet.user.profile_image_url}"/>
+                        <div style="width: 100%; overflow:hidden;">
+                          <div class="profile">
+                            <a href ="#">
+                              <span class="tooltip"> I am the twitter info
+                              <img class= "profile-pic" src="${tweet.user.profile_image_url}" alt="Profile picture"/>
+                              </span>
+                            </a>
                           </div>
-                          <div class="row desc">${tweet.text}</div>
-                          <div class="images">${picture}</div>
-                          <div class="row" style="text-align:left">
-                            <div class="col-md-2"></div>
-                            <div class="col-md-2"><i class="fa fa-heart" aria-hidden="true"> ${tweet.favorite_count}</i></div>
-                            <div class="col-md-2"><i class="fa fa-retweet" aria-hidden="true"> ${tweet.retweet_count}</i></div>
-                            <div class="col-md-2"></div>
-                            <div class="col-md-4">${time}</div>
+                          <div class="profile-text">
+                            <div>${output_text}</div>
+                            <div class="images">${picture}</div>
+                            <div class="footer">
+                              <table class = "table">
+                                <thead>
+                                  <tr>
+                                    <td><i class="fa fa-heart" aria-hidden="true"> ${tweet.favorite_count}</i></th>
+                                  <td><i class="fa fa-retweet" aria-hidden="true"> ${tweet.retweet_count}</i></th>
+                                  <td style="text-align:right; padding:8px 0 8px 8px;">${time}</th>
+                                  </tr>
+                                </thead>
+                              </table>
+                            </div>
+                          </div>
                         </div>
-                    </div> `
+                      </div> `
       resulthtml = resulthtml + tweetHTML;
     }
 
@@ -130,6 +225,8 @@ function renderResult(result) {
         var tweet = tweets[i];
         var picture = "";
         var photos = tweet.entities.media;
+        console.log(photos);
+
         if (photos) {
           for (var j = 0; j < photos.length; j++) {
           var img = photos[j].media_url;
@@ -138,22 +235,57 @@ function renderResult(result) {
         }
       // var images = tweet.entities.media.media_url;
 
+      var output_text = tweet.text;
+
+
+      var hash = tweet.entities.hashtags;
+
+      for(var k = 0; k < hash.length; k++){
+        output_text = output_text.replace("#"+hash[k].text, `<a href="#" onclick = "goToSomeplace('${hash[k].text}', '#');">#${hash[k].text}</a>`);
+      }
+
+      var user = tweet.entities.user_mentions;
+      for(var m = 0; m < user.length; m++){
+        console.log("Printing type of hash value");
+        console.log(typeof(user[m].screen_name));
+
+        output_text = output_text.replace("@"+user[m].screen_name, `<a href="#" onclick = "goToSomeplace('${user[m].screen_name}', '@');">@${user[m].screen_name}</a>`)
+      }
+
+      var url_arr = tweet.entities.urls;
+
+      for(var n = 0; n < url_arr.length; n++){
+      output_text = output_text.replace(url_arr[n].url, `<a target="_blank" href="${url_arr[n].expanded_url}">${url_arr[n].display_url}</a>`);
+    }
+
+      var mediaURL = tweet.entities.media || [];
+
+      for(var p = 0; p < mediaURL.length; p++){
+        output_text = output_text.replace(mediaURL[p].url, "");
+      }
+
       var time = getTime(tweet.created_at);
 
       var tweetHTML = `<div class="card-bg">
-                          <div>
-                            <img class= "profile-pic" src="${tweet.user.profile_image_url}"/>
+                        <div style="width: 100%; overflow:hidden;">
+                          <div class="profile"><img class= "profile-pic" src="${tweet.user.profile_image_url}"/> </div>
+                          <div class="profile-text">
+                            <div>${output_text}</div>
+                            <div class="images">${picture}</div>
+                            <div class="footer">
+                              <table class = "table">
+                                <thead>
+                                  <tr>
+                                    <td><i class="fa fa-heart" aria-hidden="true"> ${tweet.favorite_count}</i></th>
+                                  <td><i class="fa fa-retweet" aria-hidden="true"> ${tweet.retweet_count}</i></th>
+                                  <td style="text-align:right; padding:8px 0 8px 8px;">${time}</th>
+                                  </tr>
+                                </thead>
+                              </table>
+                            </div>
                           </div>
-                          <div class="row desc">${tweet.text}</div>
-                          <div class="images">${picture}</div>
-                          <div class="row" style="text-align:left">
-                            <div class="col-md-2"></div>
-                            <div class="col-md-2"><i class="fa fa-heart" aria-hidden="true"> ${tweet.favorite_count}</i></div>
-                            <div class="col-md-2"><i class="fa fa-retweet" aria-hidden="true"> ${tweet.retweet_count}</i></div>
-                            <div class="col-md-2"></div>
-                            <div class="col-md-4">${time}</div>
                         </div>
-                    </div> `
+                      </div> `
       resulthtml = resulthtml + tweetHTML;
     }
 
