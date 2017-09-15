@@ -68,7 +68,7 @@ body{
   height: 48px;
   border-radius: 50%;
   background: #B3E5FC;
-  float: left;
+  /*float: left;*/
   margin: 10px;
 }
 
@@ -101,17 +101,25 @@ table.table{
   padding: 0;
 }
 
-a span {
-display: none;
-position: absolute;
-color: #fff;
-background: #000;
-padding: 5px;
+body .popover {
+  max-width: 830px;
 }
 
-a {position: relative;}
+.popover-content{
+    max-width: 300px;
+    max-height: 400px;
+    text-align: center;
+}
 
-a:hover span {
-  display: block;
-  text-align: center;
+/*.img-pop{
+  text-align: center !important;
+}*/
+
+.img-pop img{
+  margin:0 auto; /* had initially used !important indicator*/
+}
+
+.no-border{
+  border-top: none !important;
+  /*text-align: left;*/
 }

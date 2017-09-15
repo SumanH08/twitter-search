@@ -2,7 +2,8 @@
 /*talk about flexbox and bootstrap 4 grid system*/
 
 function onload() {
-  console.log("Hello!");
+  console.log("Hello hi!");
+
 
   $('#search-twitter').submit(function(event) {
     event.preventDefault();
@@ -43,6 +44,19 @@ function onload() {
 
 }
 
+function pop() {
+  $('[data-toggle="popover"]').popover({
+    container: 'body',
+    html: true,
+    placement: 'auto right',
+    trigger: 'hover',
+    selector: '.profile-pic',
+    content: function() {
+      return $("#popover-content").html();
+    }
+  });
+}
+
 function addTextTag(text) {
   // document.getElementById('input-text').value = text;
 
@@ -68,15 +82,14 @@ function sendToServer() {
   sendAJAXReqest(urlToSend)
 }
 
-function goToSomeplace(onClickValue, symbol){
+function goToSomeplace(onClickValue, symbol) {
   console.log("Coming to click function");
 
-  if(symbol == "@"){
+  if (symbol == "@") {
     $("#selected").html("Tweets from");
     $("#tweet-type").html("@");
     $("#input-text").val(onClickValue);
-  }
-  else{
+  } else {
     $("#selected").html("Hashtag");
     $("#tweet-type").html("#");
     $("#input-text").val(onClickValue);
@@ -160,42 +173,64 @@ function renderResult(result) {
 
       var hash = tweet.entities.hashtags;
 
-      for(var k = 0; k < hash.length; k++){
-        output_text = output_text.replace("#"+hash[k].text, `<a href="#" onclick = "goToSomeplace('${hash[k].text}', '#');">#${hash[k].text}</a>`);
+      for (var k = 0; k < hash.length; k++) {
+        output_text = output_text.replace("#" + hash[k].text, `<a href="#" onclick = "goToSomeplace('${hash[k].text}', '#');">#${hash[k].text}</a>`);
       }
 
       var user = tweet.entities.user_mentions;
-      for(var m = 0; m < user.length; m++){
+      for (var m = 0; m < user.length; m++) {
         console.log("Printing type of hash value");
         console.log(typeof(user[m].screen_name));
 
-        output_text = output_text.replace("@"+user[m].screen_name, `<a href="#" onclick = "goToSomeplace('${user[m].screen_name}', '@');">@${user[m].screen_name}</a>`)
+        output_text = output_text.replace("@" + user[m].screen_name, `<a href="#" onclick = "goToSomeplace('${user[m].screen_name}', '@');">@${user[m].screen_name}</a>`)
       }
 
       var url_arr = tweet.entities.urls;
 
-      for(var n = 0; n < url_arr.length; n++){
-      output_text = output_text.replace(url_arr[n].url, `<a target="_blank" href="${url_arr[n].expanded_url}">${url_arr[n].display_url}</a>`);
-    }
+      for (var n = 0; n < url_arr.length; n++) {
+        output_text = output_text.replace(url_arr[n].url, `<a target="_blank" href="${url_arr[n].expanded_url}">${url_arr[n].display_url}</a>`);
+      }
 
       var mediaURL = tweet.entities.media || [];
 
-      for(var p = 0; p < mediaURL.length; p++){
+      for (var p = 0; p < mediaURL.length; p++) {
         output_text = output_text.replace(mediaURL[p].url, "");
       }
 
 
-    console.log(typeof(tweet.text));
+      console.log(typeof(tweet.text));
       var time = getTime(tweet.created_at);
 
       var tweetHTML = `<div class="card-bg">
                         <div style="width: 100%; overflow:hidden;">
                           <div class="profile">
-                            <a href ="#">
-                              <span class="tooltip"> I am the twitter info
-                              <img class= "profile-pic" src="${tweet.user.profile_image_url}" alt="Profile picture"/>
-                              </span>
-                            </a>
+                          <a href ="#" data-toggle="popover" data-full = "https://www.youtube.com/" animation=false;>
+                            <img class= "profile-pic" src="${tweet.user.profile_image_url}" alt="Profile picture"/>
+                          </a>
+                          <div id="popover-content" class="hide">
+                          <table class="table">
+                            <thead>
+                              <tr>
+                              <td>
+                              <div class="img-pop">
+                          <img class= "profile-pic" src="${tweet.user.profile_image_url}" alt="Profile picture"/>
+                            </div>
+                              </td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr><td class="no-border" style="font-size: 20px">
+                          <div><b>${tweet.user.name}</b></div>
+                          </td></tr>
+                          <tr><td class="no-border" style="padding:0 0 0 8px; color:rgba(0,0,0,0.5);">
+                          <div>@${tweet.user.screen_name}</div>
+                          </td></tr>
+                            <tr><td class="no-border">
+                            <div><i>${tweet.user.description}</i></div>
+                            </td></tr>
+                          </tbody>
+                          </table>
+                          </div>
                           </div>
                           <div class="profile-text">
                             <div>${output_text}</div>
@@ -218,49 +253,50 @@ function renderResult(result) {
     }
 
     $(".result-section").html(resulthtml);
-  } else {
-      var tweets = result.tweets.statuses;
-      console.log(result.tweets);
-      for (var i = 0; i < tweets.length; i++) {
-        var tweet = tweets[i];
-        var picture = "";
-        var photos = tweet.entities.media;
-        console.log(photos);
+    pop();
 
-        if (photos) {
-          for (var j = 0; j < photos.length; j++) {
+  } else {
+    var tweets = result.tweets.statuses;
+    console.log(result.tweets);
+    for (var i = 0; i < tweets.length; i++) {
+      var tweet = tweets[i];
+      var picture = "";
+      var photos = tweet.entities.media;
+      console.log(photos);
+
+      if (photos) {
+        for (var j = 0; j < photos.length; j++) {
           var img = photos[j].media_url;
           picture += `<img src="${img}" />`;
         }
-        }
+      }
       // var images = tweet.entities.media.media_url;
 
       var output_text = tweet.text;
 
-
       var hash = tweet.entities.hashtags;
 
-      for(var k = 0; k < hash.length; k++){
-        output_text = output_text.replace("#"+hash[k].text, `<a href="#" onclick = "goToSomeplace('${hash[k].text}', '#');">#${hash[k].text}</a>`);
+      for (var k = 0; k < hash.length; k++) {
+        output_text = output_text.replace("#" + hash[k].text, `<a href="#" onclick = "goToSomeplace('${hash[k].text}', '#');">#${hash[k].text}</a>`);
       }
 
       var user = tweet.entities.user_mentions;
-      for(var m = 0; m < user.length; m++){
+      for (var m = 0; m < user.length; m++) {
         console.log("Printing type of hash value");
         console.log(typeof(user[m].screen_name));
 
-        output_text = output_text.replace("@"+user[m].screen_name, `<a href="#" onclick = "goToSomeplace('${user[m].screen_name}', '@');">@${user[m].screen_name}</a>`)
+        output_text = output_text.replace("@" + user[m].screen_name, `<a href="#" onclick = "goToSomeplace('${user[m].screen_name}', '@');">@${user[m].screen_name}</a>`)
       }
 
       var url_arr = tweet.entities.urls;
 
-      for(var n = 0; n < url_arr.length; n++){
-      output_text = output_text.replace(url_arr[n].url, `<a target="_blank" href="${url_arr[n].expanded_url}">${url_arr[n].display_url}</a>`);
-    }
+      for (var n = 0; n < url_arr.length; n++) {
+        output_text = output_text.replace(url_arr[n].url, `<a target="_blank" href="${url_arr[n].expanded_url}">${url_arr[n].display_url}</a>`);
+      }
 
       var mediaURL = tweet.entities.media || [];
 
-      for(var p = 0; p < mediaURL.length; p++){
+      for (var p = 0; p < mediaURL.length; p++) {
         output_text = output_text.replace(mediaURL[p].url, "");
       }
 
@@ -268,7 +304,35 @@ function renderResult(result) {
 
       var tweetHTML = `<div class="card-bg">
                         <div style="width: 100%; overflow:hidden;">
-                          <div class="profile"><img class= "profile-pic" src="${tweet.user.profile_image_url}"/> </div>
+                          <div class="profile">
+                          <a href ="#" data-toggle="popover" data-full = "https://www.youtube.com/" animation=false;>
+                            <img class= "profile-pic" src="${tweet.user.profile_image_url}" alt="Profile picture"/>
+                          </a>
+                          <div id="popover-content" class="hide">
+                          <table class="table">
+                            <thead>
+                              <tr>
+                              <td>
+                              <div class="img-pop">
+                          <img class= "profile-pic" src="${tweet.user.profile_image_url}" alt="Profile picture"/>
+                            </div>
+                              </td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr><td class="no-border" style="font-size: 20px">
+                          <div><b>${tweet.user.name}</b></div>
+                          </td></tr>
+                          <tr><td class="no-border" style="padding:0 0 0 8px; color:rgba(0,0,0,0.5);">
+                          <div>@${tweet.user.screen_name}</div>
+                          </td></tr>
+                            <tr><td class="no-border">
+                            <div><i>${tweet.user.description}</i></div>
+                            </td></tr>
+                          </tbody>
+                          </table>
+                          </div>
+                          </div>
                           <div class="profile-text">
                             <div>${output_text}</div>
                             <div class="images">${picture}</div>
@@ -288,8 +352,8 @@ function renderResult(result) {
                       </div> `
       resulthtml = resulthtml + tweetHTML;
     }
-
     $(".result-section").html(resulthtml);
+    pop();
   }
 
 }
