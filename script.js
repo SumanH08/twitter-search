@@ -65,6 +65,8 @@ function addTextTag(text) {
 
 function sendToServer() {
 
+  $(".result-section").html(`<p><img width="24" src="img/loading.svg"/>Loading...</p>`)
+
   var valueFromInput = $('#input-text').val();
   var tweetType = $("#tweet-type").html();
   var urlToSend = "";
@@ -101,7 +103,11 @@ function sendAJAXReqest(urlToSend) {
   $.ajax({
     url: urlToSend,
     success: function(result) {
-      renderResult(result);
+      if ($("#tweet-type").html() == "@")
+        renderResult(result.tweets);
+      else {
+        renderResult(result.tweets.statuses);
+      }
     },
     error: function(err) {
       renderError(err.status);
@@ -111,100 +117,92 @@ function sendAJAXReqest(urlToSend) {
 
 function renderResult(result) {
   var resulthtml = "";
-  // var tweets = result.tweets;
-  // console.log(tweetType);
-  // console.log(tweets.statuses.length);
 
-  if ($("#tweet-type").html() == "@") {
-    var tweets = result.tweets;
-    console.log(result.tweets);
-    //use map if
-    for (var i = 0; i < tweets.length; i++) {
-      var tweet = tweets[i];
-      var picture = "";
+  var tweets = result;
+  console.log(result);
+  //use map if
+  for (var i = 0; i < tweets.length; i++) {
+    var tweet = tweets[i];
+    var picture = "";
 
-      var photos = tweet.entities.media;
-      if (photos) {
-        for (var j = 0; j < photos.length; j++) {
-          var img = photos[j].media_url;
-          picture += `<img src="${img}" />`;
-        }
+    var photos = tweet.entities.media;
+    if (photos) {
+      for (var j = 0; j < photos.length; j++) {
+        var img = photos[j].media_url;
+        picture += `<img src="${img}" />`;
       }
-      // console.log("printing hash");
-      // console.log(hash);
-      //
-      // var hash_start = [];
-      // var hash_end = [];
-      // for(var k = 0; k < hash.length; k++){
-      //     hash_start.push(hash[k].indices[0]);
-      //     hash_end.push(hash[k].indices[1]);
-      // }
-      //
-      //
-      // var user = tweet.entities.user_mentions;
-      // var user_start = [];
-      // var user_end = [];
-      //
-      // for(var m = 0; m < user.length; m++){
-      //   user_start.push(user[m].indices[0]);
-      //   user_end.push(user[m].indices[1]);
-      // }
+    }
+    // console.log("printing hash");
+    // console.log(hash);
+    //
+    // var hash_start = [];
+    // var hash_end = [];
+    // for(var k = 0; k < hash.length; k++){
+    //     hash_start.push(hash[k].indices[0]);
+    //     hash_end.push(hash[k].indices[1]);
+    // }
+    //
+    //
+    // var user = tweet.entities.user_mentions;
+    // var user_start = [];
+    // var user_end = [];
+    //
+    // for(var m = 0; m < user.length; m++){
+    //   user_start.push(user[m].indices[0]);
+    //   user_end.push(user[m].indices[1]);
+    // }
 
 
-      // for(var l=0; l < tweet.text.length; l++){
-      //   if(hash_start.indexOf(l) != -1){
-      //     output_text += "<a>"
-      //   }
-      //   else if(hash_end.indexOf(l) != -1){
-      //     output_text += "</a>"
-      //   }
-      //   else if(user_start.indexOf(l) != -1){
-      //     output_text += "<a href='#'>";
-      //   }
-      //   else if(user_end.indexOf(l) != -1){
-      //     output_text += "</a>";
-      //   }
-      //
-      //   output_text += tweet.text[l];
-      // }
+    // for(var l=0; l < tweet.text.length; l++){
+    //   if(hash_start.indexOf(l) != -1){
+    //     output_text += "<a>"
+    //   }
+    //   else if(hash_end.indexOf(l) != -1){
+    //     output_text += "</a>"
+    //   }
+    //   else if(user_start.indexOf(l) != -1){
+    //     output_text += "<a href='#'>";
+    //   }
+    //   else if(user_end.indexOf(l) != -1){
+    //     output_text += "</a>";
+    //   }
+    //
+    //   output_text += tweet.text[l];
+    // }
 
-      var output_text = tweet.text;
+    var output_text = tweet.text;
 
+    var hash = tweet.entities.hashtags;
 
-      var hash = tweet.entities.hashtags;
+    for (var k = 0; k < hash.length; k++) {
+      output_text = output_text.replace("#" + hash[k].text, `<a href="#" onclick = "goToSomeplace('${hash[k].text}', '#');">#${hash[k].text}</a>`);
+    }
 
-      for (var k = 0; k < hash.length; k++) {
-        output_text = output_text.replace("#" + hash[k].text, `<a href="#" onclick = "goToSomeplace('${hash[k].text}', '#');">#${hash[k].text}</a>`);
-      }
+    var user = tweet.entities.user_mentions;
+    for (var m = 0; m < user.length; m++) {
 
-      var user = tweet.entities.user_mentions;
-      for (var m = 0; m < user.length; m++) {
-        console.log("Printing type of hash value");
-        console.log(typeof(user[m].screen_name));
+      output_text = output_text.replace("@" + user[m].screen_name, `<a href="#" onclick = "goToSomeplace('${user[m].screen_name}', '@');">@${user[m].screen_name}</a>`)
+    }
 
-        output_text = output_text.replace("@" + user[m].screen_name, `<a href="#" onclick = "goToSomeplace('${user[m].screen_name}', '@');">@${user[m].screen_name}</a>`)
-      }
+    var url_arr = tweet.entities.urls;
 
-      var url_arr = tweet.entities.urls;
+    for (var n = 0; n < url_arr.length; n++) {
+      output_text = output_text.replace(url_arr[n].url, `<a target="_blank" href="${url_arr[n].expanded_url}">${url_arr[n].display_url}</a>`);
+    }
 
-      for (var n = 0; n < url_arr.length; n++) {
-        output_text = output_text.replace(url_arr[n].url, `<a target="_blank" href="${url_arr[n].expanded_url}">${url_arr[n].display_url}</a>`);
-      }
+    var mediaURL = tweet.entities.media || [];
 
-      var mediaURL = tweet.entities.media || [];
+    for (var p = 0; p < mediaURL.length; p++) {
+      output_text = output_text.replace(mediaURL[p].url, "");
+    }
 
-      for (var p = 0; p < mediaURL.length; p++) {
-        output_text = output_text.replace(mediaURL[p].url, "");
-      }
+    console.log(typeof(tweet.text));
+    var time = getTime(tweet.created_at);
 
-
-      console.log(typeof(tweet.text));
-      var time = getTime(tweet.created_at);
-
-      var tweetHTML = `<div class="card-bg">
+    var tweetHTML = `<div class="card-bg hey">
                         <div style="width: 100%; overflow:hidden;">
                           <div class="profile">
-                          <a href ="#" data-toggle="popover" data-full = "https://www.youtube.com/" animation=false;>
+                          <a href ="#" data-toggle="popover" animation=false;>
                             <img class= "profile-pic" src="${tweet.user.profile_image_url}" alt="Profile picture"/>
                           </a>
                           <div id="popover-content" class="hide">
@@ -249,114 +247,12 @@ function renderResult(result) {
                           </div>
                         </div>
                       </div> `
-      resulthtml = resulthtml + tweetHTML;
-    }
-
-    $(".result-section").html(resulthtml);
-    pop();
-
-  } else {
-    var tweets = result.tweets.statuses;
-    console.log(result.tweets);
-    for (var i = 0; i < tweets.length; i++) {
-      var tweet = tweets[i];
-      var picture = "";
-      var photos = tweet.entities.media;
-      console.log(photos);
-
-      if (photos) {
-        for (var j = 0; j < photos.length; j++) {
-          var img = photos[j].media_url;
-          picture += `<img src="${img}" />`;
-        }
-      }
-      // var images = tweet.entities.media.media_url;
-
-      var output_text = tweet.text;
-
-      var hash = tweet.entities.hashtags;
-
-      for (var k = 0; k < hash.length; k++) {
-        output_text = output_text.replace("#" + hash[k].text, `<a href="#" onclick = "goToSomeplace('${hash[k].text}', '#');">#${hash[k].text}</a>`);
-      }
-
-      var user = tweet.entities.user_mentions;
-      for (var m = 0; m < user.length; m++) {
-        console.log("Printing type of hash value");
-        console.log(typeof(user[m].screen_name));
-
-        output_text = output_text.replace("@" + user[m].screen_name, `<a href="#" onclick = "goToSomeplace('${user[m].screen_name}', '@');">@${user[m].screen_name}</a>`)
-      }
-
-      var url_arr = tweet.entities.urls;
-
-      for (var n = 0; n < url_arr.length; n++) {
-        output_text = output_text.replace(url_arr[n].url, `<a target="_blank" href="${url_arr[n].expanded_url}">${url_arr[n].display_url}</a>`);
-      }
-
-      var mediaURL = tweet.entities.media || [];
-
-      for (var p = 0; p < mediaURL.length; p++) {
-        output_text = output_text.replace(mediaURL[p].url, "");
-      }
-
-      var time = getTime(tweet.created_at);
-
-      var tweetHTML = `<div class="card-bg">
-                        <div style="width: 100%; overflow:hidden;">
-                          <div class="profile">
-                          <a href ="#" data-toggle="popover" data-full = "https://www.youtube.com/" animation=false;>
-                            <img class= "profile-pic" src="${tweet.user.profile_image_url}" alt="Profile picture"/>
-                          </a>
-                          <div id="popover-content" class="hide">
-                          <table class="table">
-                            <thead>
-                              <tr>
-                              <td>
-                              <div class="img-pop">
-                          <img class= "profile-pic" src="${tweet.user.profile_image_url}" alt="Profile picture"/>
-                            </div>
-                              </td>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr><td class="no-border" style="font-size: 20px">
-                          <div><b>${tweet.user.name}</b></div>
-                          </td></tr>
-                          <tr><td class="no-border" style="padding:0 0 0 8px; color:rgba(0,0,0,0.5);">
-                          <div>@${tweet.user.screen_name}</div>
-                          </td></tr>
-                            <tr><td class="no-border">
-                            <div><i>${tweet.user.description}</i></div>
-                            </td></tr>
-                          </tbody>
-                          </table>
-                          </div>
-                          </div>
-                          <div class="profile-text">
-                            <div>${output_text}</div>
-                            <div class="images">${picture}</div>
-                            <div class="footer">
-                              <table class = "table">
-                                <thead>
-                                  <tr>
-                                    <td><i class="fa fa-heart" aria-hidden="true"> ${tweet.favorite_count}</i></th>
-                                  <td><i class="fa fa-retweet" aria-hidden="true"> ${tweet.retweet_count}</i></th>
-                                  <td style="text-align:right; padding:8px 0 8px 8px;">${time}</th>
-                                  </tr>
-                                </thead>
-                              </table>
-                            </div>
-                          </div>
-                        </div>
-                      </div> `
-      resulthtml = resulthtml + tweetHTML;
-    }
-    $(".result-section").html(resulthtml);
-    pop();
+    resulthtml = resulthtml + tweetHTML;
   }
-
+  $(".result-section").html(resulthtml);
+  pop();
 }
+
 
 function getTime(time) {
   // var dt = time;
@@ -365,16 +261,6 @@ function getTime(time) {
   var test = time.split(" ", 3).join(" ");
   var curr_hour = st.getHours();
   var curr_min = st.getMinutes();
-
-  //Suman's noob code!
-  // var AM_PM = "";
-  //
-  // if(curr_hour < 12){
-  //   AM_PM = "AM";
-  // }
-  // else{
-  //   AM_PM = "PM";
-  // }
 
   var AM_PM = "PM";
   if (curr_hour < 12) {
