@@ -19,7 +19,7 @@ function onload() {
     $("#tweet-type").html("@");
     $(".select-input").html(`<div class="tags-select">
         <p>Example:
-          <a id = "example1" href="#" onClick="addTextTag('h_suman'); return false">h_suman,</a>
+          <a id = "example1" href="#" onClick="addTextTag('h_suman'); return false">h_suman</a>,
           <a id="example2" href="#" onClick="addTextTag('taylorswift13'); return false"> taylorswift13</a>
         </p>
       </div>`)
@@ -31,13 +31,13 @@ function onload() {
     }
     $("#selected").text("Hashtag");
     $("#tweet-type").html("#");
-    $("#example1").html("Soccer,");
+    $("#example1").html("Soccer");
     $("#example2").html(" Food");
 
     $(".select-input").html(`<div class="tags-select">
         <p>Example:
-          <a href="#" onClick="addTextTag('Soccer'); return false">Soccer,</>
-          <a href="#" onClick="addTextTag('Food'); return false"> Food</>
+          <a href="#" onClick="addTextTag('Soccer'); return false">Soccer</a>,
+          <a href="#" onClick="addTextTag('Food'); return false"> Food</a>
         </p>
       </div>`)
   });
@@ -52,9 +52,30 @@ function pop() {
     trigger: 'hover',
     selector: '.profile-pic',
     content: function() {
-      return $("#popover-content").html();
+      return $(this).parent().parent().find("#popover-content").html();
     }
   });
+}
+
+function showImage(imgName){
+  document.getElementById('largeImg').src = imgName;
+  showLargeImagePanel();
+  unselectAll();
+}
+
+function showLargeImagePanel(){
+  document.getElementById('largeImgPanel').style.visibility = 'visible';
+}
+
+function unselectAll(){
+  if(document.selection)
+    document.selection.empty();
+  if(window.getSelection)
+    window.getSelection().removeAllRanges();
+}
+
+function hideMe(obj) {
+    obj.style.visibility = 'hidden';
 }
 
 function addTextTag(text) {
@@ -129,7 +150,9 @@ function renderResult(result) {
     if (photos) {
       for (var j = 0; j < photos.length; j++) {
         var img = photos[j].media_url;
-        picture += `<img src="${img}" />`;
+        // var img_enlarge = photos[j].expanded_url;
+      //  picture += `<img src="${img}" onclick = "showImage('${img}');" />`;
+        picture += `<div class="bg-img" style="background-image: url(${img});" onclick = "showImage('${img}');"></div>`
       }
     }
     // console.log("printing hash");
@@ -199,11 +222,12 @@ function renderResult(result) {
     console.log(typeof(tweet.text));
     var time = getTime(tweet.created_at);
 
-    var tweetHTML = `<div class="card-bg hey">
+    var tweetHTML = `<div class="card-bg">
                         <div style="width: 100%; overflow:hidden;">
                           <div class="profile">
                           <a href ="#" data-toggle="popover" animation=false;>
                             <img class= "profile-pic" src="${tweet.user.profile_image_url}" alt="Profile picture"/>
+
                           </a>
                           <div id="popover-content" class="hide">
                           <table class="table">
@@ -232,14 +256,18 @@ function renderResult(result) {
                           </div>
                           <div class="profile-text">
                             <div>${output_text}</div>
-                            <div class="images">${picture}</div>
+                            <div class="images">${picture}
+                              <div id="largeImgPanel" onclick="hideMe(this);">
+                              <img id="largeImg" style="max-height: 80%; max-width: 80%; margin: 0; padding: 0;">
+                              </div>
+                            </div>
                             <div class="footer">
                               <table class = "table">
                                 <thead>
                                   <tr>
-                                    <td><i class="fa fa-heart" aria-hidden="true"> ${tweet.favorite_count}</i></th>
-                                  <td><i class="fa fa-retweet" aria-hidden="true"> ${tweet.retweet_count}</i></th>
-                                  <td style="text-align:right; padding:8px 0 8px 8px;">${time}</th>
+                                    <td style="padding-top: 0"><i class="fa fa-heart" aria-hidden="true"></i> ${tweet.favorite_count}</th>
+                                  <td style="padding-top: 0"><i class="fa fa-retweet" aria-hidden="true"></i> ${tweet.retweet_count}</th>
+                                  <td style="text-align:right; padding:0 0 8px 8px;">${time}</th>
                                   </tr>
                                 </thead>
                               </table>
@@ -271,6 +299,10 @@ function getTime(time) {
     curr_hour = 12;
   } else if (curr_hour > 12) {
     curr_hour = curr_hour - 12;
+  }
+
+  if(curr_min < 10){
+    curr_min = "0"+curr_min;
   }
 
   return `${test} ${curr_hour}:${curr_min} ${AM_PM}`;
